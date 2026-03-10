@@ -13,6 +13,11 @@ if [ -z "$session_id" ]; then
   exit 0
 fi
 
+# Sanitize session_id to prevent path traversal
+if [[ ! "$session_id" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  exit 0
+fi
+
 state="$1"
 
 if [ "$state" = "delete" ]; then

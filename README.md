@@ -44,7 +44,7 @@ The `PreToolUse`/`PostToolUse` pairing catches permission prompts: PreToolUse se
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/vs-code-status-bar-indicator.git
+git clone https://github.com/ericchen59/vs-code-status-bar-indicator.git
 cd vs-code-status-bar-indicator
 bash install.sh
 ```
