@@ -129,7 +129,7 @@ function updateStatusBar() {
 }
 
 function notify(message, soundFile) {
-  execFile('notify-send', ['--urgency=critical', '--expire-time=3000', '--icon=dialog-information', 'Claude Code', message], () => {});
+  execFile('notify-send', ['--urgency=normal', '--expire-time=3000', '--icon=dialog-information', 'Claude Code', message], () => {});
   execFile('paplay', [`/usr/share/sounds/freedesktop/stereo/${soundFile}`], () => {});
 }
 
