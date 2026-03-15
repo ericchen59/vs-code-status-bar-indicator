@@ -9,7 +9,10 @@ const DEBOUNCE_MS = 300;
 
 let statusBarItem;
 let debounceTimer;
+let waitingNotifyTimer;
 let previousAggregate = 'none';
+
+const WAITING_NOTIFY_DELAY_MS = 2000;
 
 function activate(context) {
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
@@ -120,8 +123,22 @@ function updateStatusBar() {
 
   // Fire notifications on transitions
   if (aggregate === 'waiting' && previousAggregate !== 'waiting') {
-    notify('Claude needs your input', 'bell.oga');
-  } else if (aggregate === 'idle' && previousAggregate !== 'idle' && previousAggregate !== 'none') {
+    // Delay notification: auto-approved tools transition waiting→working quickly,
+    // so re-check after a delay to avoid false positives. Permission prompts and
+    // AskUserQuestion stay "waiting" for much longer, so they pass the check.
+    clearTimeout(waitingNotifyTimer);
+    waitingNotifyTimer = setTimeout(() => {
+      const current = readSessions();
+      if (current.waiting > 0) {
+        notify('Claude needs your input', 'bell.oga');
+      }
+    }, WAITING_NOTIFY_DELAY_MS);
+  } else if (aggregate !== 'waiting') {
+    // State moved away from waiting before the delay fired — cancel notification
+    clearTimeout(waitingNotifyTimer);
+  }
+
+  if (aggregate === 'idle' && previousAggregate !== 'idle' && previousAggregate !== 'none') {
     notify('All tasks complete', 'complete.oga');
   }
 
